@@ -21,6 +21,7 @@ class Users(Base):
     tg_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
     username: Mapped[str] = mapped_column(String(100), nullable=True)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    phone: Mapped[str] = mapped_column(String(100))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     update_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)

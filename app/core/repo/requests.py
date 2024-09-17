@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from app.core.repo.query import UserRepo
+from app.tgbot.service.users_service import UserRepo
 
 
 
@@ -12,7 +12,7 @@ class RequestsRepo:
     session: AsyncSession
 
 
-    # @property
-    # def users(self) -> UserRepo:
+    @property
+    def users(self) -> UserRepo:
         
-    #     return UserRepo(self.session)
+        return UserRepo(self.session)

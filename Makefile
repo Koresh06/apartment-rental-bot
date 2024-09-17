@@ -1,6 +1,6 @@
 # Переменные
 PYTHON_CMD = python
-FASTAPI_APP = app.main:app
+FASTAPI_APP = app.run_fastapi:app
 MAIN_MODULE = app.__main__
 
 # Запуск FastAPI
