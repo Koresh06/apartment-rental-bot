@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from app.core.base import Base
-from app.core.models import Users, Apartment, Booking, Status
+from app.core.models import Users, Booking, Apartment, Status  # noqa   
 from app.core.config import settings
 
 # this is the Alembic Config object, which provides

@@ -7,10 +7,12 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.core.base import Base
 
 if TYPE_CHECKING:
-    from app.core.models import Users, Status
+    from app.core.models import Users, Status, Booking
 
 
 class Apartment(Base):
+
+    __tablename__ = "apartments"
     
     id: Mapped[int] = mapped_column(
         Integer,
@@ -25,4 +27,5 @@ class Apartment(Base):
     characteristics: Mapped[str] = mapped_column(String(500), nullable=True)  # Доп. характеристики квартиры
 
     user_rel: Mapped["Users"] = relationship("Users", back_populates="apartment_rel")
-    status_rel: Mapped["Status"] = relationship("Status", back_populates="apartment_rel")
+    booking_rel: Mapped[List["Booking"]] = relationship("Booking", back_populates="apartment_rel", cascade="all, delete")
+    status_rel: Mapped["Status"] = relationship("Status", back_populates="apartment_rel", cascade="all, delete")

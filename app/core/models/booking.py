@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 class Booking(Base):
 
+    __tablename__ = "booking"
+
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,

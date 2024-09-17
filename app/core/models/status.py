@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 class Status(Base):
 
+    __tablename__ = "status"
+
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,

@@ -1,12 +1,18 @@
+from collections.abc import Mapping
+
+from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.ext.asyncio import AsyncAttrs
 
-from app.utils.case_convector import camel_case_to_snake_case
+convention: Mapping[str, str] = {
+    "ix": "ix__%(column_0_label)s",
+    "uq": "uq__%(table_name)s__%(column_0_name)s",
+    "ck": "ck__%(table_name)s__%(constraint_name)s",
+    "fk": "%(table_name)s_%(column_0_name)s_fkey",
+    "pk": "pk__%(table_name)s",
+}
+meta = MetaData(naming_convention=convention)
 
 
-class Base(DeclarativeBase):
-    __abstract__ = True
-
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return f"{camel_case_to_snake_case(cls.__name__)}"
+class Base(AsyncAttrs, DeclarativeBase):
+    metadata = meta
