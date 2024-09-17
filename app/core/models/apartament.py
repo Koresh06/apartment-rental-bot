@@ -23,6 +23,7 @@ class Apartment(Base):
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=True)
+    rooms: Mapped[int] = mapped_column(Integer, nullable=False)
     photos: Mapped[str] = mapped_column(String(1000), nullable=True)  # Список URL фотографий (в виде строки)
     characteristics: Mapped[str] = mapped_column(String(500), nullable=True)  # Доп. характеристики квартиры
 

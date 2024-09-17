@@ -12,7 +12,7 @@ class UserRepo(BaseRepo):
     async def check_user(self, tg_id: int):
         user = await self.session.scalar(select(Users).where(Users.tg_id == tg_id))
 
-        if not user:
+        if user:
             return True
         return False
     

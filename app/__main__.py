@@ -7,7 +7,7 @@ from app.core.db_helper import db_helper
 from app.tgbot.middlewares.db_session import DbSessionMiddleware
 
 from app.tgbot.bot import dp, bot
-from app.tgbot.dialog.user.user_dialog import start_dialog
+from app.tgbot.dialog.user.user_dialog import start_dialog, main_dialog
 from app.core.config import settings
 from app.run_fastapi import app
 
@@ -16,7 +16,10 @@ logger = logging.getLogger(__name__)
 
 # Установка middleware и роутеров для бота
 dp.update.middleware(DbSessionMiddleware(sessionmaker=db_helper.sessionmaker))
-dp.include_routers(start_dialog)
+dp.include_routers(
+    main_dialog,
+    start_dialog,
+)
 setup_dialogs(dp)
 
 
