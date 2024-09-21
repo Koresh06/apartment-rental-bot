@@ -1,13 +1,13 @@
 from typing import List, TYPE_CHECKING
 from datetime import datetime
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, DateTime, Float
+from sqlalchemy import ARRAY, Boolean, Column, Integer, String, ForeignKey, Date, DateTime, Float
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 
 from app.core.base import Base
 
 if TYPE_CHECKING:
-    from app.core.models import Users, Status, Booking
+    from app.core.models import Booking, ApartmentPhoto
 
 
 class Apartment(Base):
@@ -19,14 +19,12 @@ class Apartment(Base):
         primary_key=True,
         index=True,
     )
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=True)
     rooms: Mapped[int] = mapped_column(Integer, nullable=False)
-    photos: Mapped[str] = mapped_column(String(1000), nullable=True)  # Список URL фотографий (в виде строки)
-    characteristics: Mapped[str] = mapped_column(String(500), nullable=True)  # Доп. характеристики квартиры
+    status: Mapped[bool] = mapped_column(Boolean, default=True)
+    characteristics: Mapped[List[str]] = mapped_column(ARRAY(String), nullable=True)
 
-    user_rel: Mapped["Users"] = relationship("Users", back_populates="apartment_rel")
     booking_rel: Mapped[List["Booking"]] = relationship("Booking", back_populates="apartment_rel", cascade="all, delete")
-    status_rel: Mapped["Status"] = relationship("Status", back_populates="apartment_rel", cascade="all, delete")
+    apaphotos_photos_rel: Mapped[List["ApartmentPhoto"]] = relationship("ApartmentPhoto", back_populates="apartment_rel", cascade="all, delete")

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Управление апартаментами</h1>
+    <div class="list-group">
+        {% for apartament in apartaments %}
+        <!-- Начало карточки апартамента -->
+        <div class="list-group-item list-group-item-action">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <img src="{{ url_for('static', path=apartament.apaphotos_photos_rel[0].file_path) }}" class="img-fluid" alt="Фото апартамента" style="max-height: 200px; max-width: 100px; object-fit: cover;">
+                </div>
+                <div class="col-md-6">
+                    <h5>Адрес: {{ apartament.location }}</h5>
+                    <p><strong>Количество комнат:</strong> {{ apartament.rooms }}</p>
+                    <p><strong>Цена:</strong> {{ apartament.price }} руб./ночь</p>
+                    <p><strong>Статус:</strong>
+                        <span class="badge {% if apartament.status %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ 'Свободно' if apartament.status else 'Забронировано' }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-3 text-end">
+                    <a href="/apartaments/get_apartament/{{ apartament.id }}/" class="btn btn-primary mb-2">Подробнее</a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

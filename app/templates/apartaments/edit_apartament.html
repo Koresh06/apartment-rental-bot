@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Изменение данных квартиры</h1>
+
+    <form action="/apartaments/edit_apartament/{{ apartament.id }}/" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="location" class="form-label">Адрес квартиры</label>
+            <input type="text" class="form-control" id="location" name="location" value="{{ apartament.location }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="rooms" class="form-label">Количество комнат</label>
+            <input type="number" class="form-control" id="rooms" name="rooms" value="{{ apartament.rooms }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Цена за сутки</label>
+            <input type="number" class="form-control" id="price" name="price" value="{{ apartament.price }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label">Описание квартиры</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required>{{ apartament.description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="photos" class="form-label">Фотографии квартиры (оставьте пустым, если не хотите менять)</label>
+            <input type="file" class="form-control" id="photos" name="photos" multiple>
+            <div class="mt-2">
+                {% for photo in apartament.apaphotos_photos_rel %}
+                    <img src="{{ url_for('static', path=photo.file_path) }}" class="img-thumbnail" alt="Фото квартиры" style="max-height: 100px; max-width: 100px; object-fit: cover;">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="features" class="form-label">Удобства</label>
+            <div class="row">
+                <div class="col-md-6">
+                    {% for feature in ['Wi-Fi', 'Парковка', 'Кондиционер', 'Кухня', 'Телевизор'] %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="{{ feature|lower }}" name="features" value="{{ feature }}"
+                                   {% if feature in apartament.characteristics %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ feature|lower }}">{{ feature }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for feature in ['Стиральная машина', 'Балкон', 'Лифт', 'Отопление', 'Бассейн'] %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="{{ feature|lower }}" name="features" value="{{ feature }}"
+                                   {% if feature in apartament.characteristics %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ feature|lower }}">{{ feature }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        
+        <button type="submit" class="btn btn-success">Сохранить изменения</button>
+    </form>
+</div>
+{% endblock %}

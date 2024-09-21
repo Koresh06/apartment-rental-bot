@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Создание новой квартиры</h1>
+
+    <form action="/apartaments/create_apartament/" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="address" class="form-label">Адрес квартиры</label>
+            <input type="text" class="form-control" id="location" name="location" placeholder="Введите адрес" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="rooms" class="form-label">Количество комнат</label>
+            <input type="number" class="form-control" id="rooms" name="rooms" placeholder="Введите количество комнат" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Цена за сутки</label>
+            <input type="number" class="form-control" id="price" name="price" placeholder="Введите цену за сутки" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label">Описание квартиры</label>
+            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Введите описание квартиры" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="photos" class="form-label">Фотографии квартиры</label>
+            <input type="file" class="form-control" id="photos" name="photos" multiple required>
+        </div>
+
+        <div class="mb-3">
+            <label for="features" class="form-label">Удобства</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="wifi" name="features" value="Wi-Fi">
+                        <label class="form-check-label" for="wifi">Wi-Fi</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="parking" name="features" value="Парковка">
+                        <label class="form-check-label" for="parking">Парковка</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ac" name="features" value="Кондиционер">
+                        <label class="form-check-label" for="ac">Кондиционер</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="kitchen" name="features" value="Кухня">
+                        <label class="form-check-label" for="kitchen">Кухня</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="tv" name="features" value="Телевизор">
+                        <label class="form-check-label" for="tv">Телевизор</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="washing_machine" name="features" value="Стиральная машина">
+                        <label class="form-check-label" for="washing_machine">Стиральная машина</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="balcony" name="features" value="Балкон">
+                        <label class="form-check-label" for="balcony">Балкон</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="elevator" name="features" value="Лифт">
+                        <label class="form-check-label" for="elevator">Лифт</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="heating" name="features" value="Отопление">
+                        <label class="form-check-label" for="heating">Отопление</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="pool" name="features" value="Бассейн">
+                        <label class="form-check-label" for="pool">Бассейн</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать квартиру</button>
+    </form>
+</div>
+
+
+{% endblock %}

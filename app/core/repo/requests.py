@@ -2,7 +2,9 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.tgbot.service.users_service import UserRepo
+from app.tgbot.service.users_service import BotUserRepo
+from app.api.api_v1.services.apartament_service import ApartamentRepo
+from app.api.api_v1.services.apartament_photo_service import ApartamentPhotoRepo
 
 
 
@@ -13,6 +15,19 @@ class RequestsRepo:
 
 
     @property
-    def users(self) -> UserRepo:
+    def users(self) -> BotUserRepo:
         
-        return UserRepo(self.session)
+        return BotUserRepo(self.session)
+    
+
+    @property
+    def apartaments(self) -> ApartamentRepo:
+        
+        return ApartamentRepo(self.session)
+    
+
+    @property
+    def apartament_photos(self) -> ApartamentPhotoRepo:
+        
+        return ApartamentPhotoRepo(self.session)
+    

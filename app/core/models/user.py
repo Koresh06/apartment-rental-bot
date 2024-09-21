@@ -26,7 +26,6 @@ class Users(Base):
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     update_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    apartment_rel: Mapped[List["Apartment"]] = relationship("Apartment", back_populates="user_rel", cascade="all, delete")
     booking_rel: Mapped[List["Booking"]] = relationship("Booking", back_populates="user_rel", cascade="all, delete")
 
 

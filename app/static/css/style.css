@@ -1,0 +1,18 @@
+h1 {
+    margin-bottom: 30px;
+}
+
+.card {
+    padding: 20px;
+    text-align: center;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-check {
+    margin-bottom: 10px;
+}
+
+

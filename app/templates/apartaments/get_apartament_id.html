@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">{{ apartament.location }}</h1>
+    
+    <!-- Карусель фотографий -->
+    <div id="apartmentCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for photo in apartament.apaphotos_photos_rel %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <img src="{{ url_for('static', path=photo.file_path) }}" class="d-block w-100" alt="Фото апартамента" style="max-height: 400px; object-fit: cover;">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущее</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующее</span>
+        </button>
+    </div>
+
+    <div class="mt-4">
+        <h5><strong>Описание:</strong></h5>
+        <p>{{ apartament.description }}</p>
+        <p><strong>Количество комнат:</strong> {{ apartament.rooms }}</p>
+        <p><strong>Цена:</strong> {{ apartament.price }} руб./ночь</p>
+        <p><strong>Характеристики:</strong> {{ apartament.characteristics }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <p><strong>Статус:</strong>
+                <span class="badge {% if apartament.status %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ 'Свободно' if apartament.status else 'Забронировано' }}
+                </span>
+            </p>
+            <form action="/apartaments/update_status/{{ apartament.id }}/" method="POST" style="display:inline;">
+                <input type="hidden" name="status" value="{{ 'Забронировано' if apartament.status else 'Свободно' }}">
+                <button type="submit" class="btn {% if apartament.status %}btn-success{% else %}btn-warning{% endif %}">
+                    {% if apartament.status %}Забронировать{% else %}Освободить{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="/apartaments/edit_apartament/{{ apartament.id }}" class="btn btn-warning">Изменить</a>
+        <form action="/apartaments/delete_apartament/{{ apartament.id }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>        
+    </div>
+</div>
+{% endblock %}

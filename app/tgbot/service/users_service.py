@@ -6,7 +6,7 @@ from app.core.models import Users
 from app.core.repo.base import BaseRepo
 
 
-class UserRepo(BaseRepo):
+class BotUserRepo(BaseRepo):
 
 
     async def check_user(self, tg_id: int):
