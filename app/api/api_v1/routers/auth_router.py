@@ -4,12 +4,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from datetime import timedelta
 from app.api.api_v1.auth_helpers import (
-    ADMIN_LOGIN,
-    ADMIN_PASSWORD,
-    SECRET_KEY,
     create_hashed_cookie,
     verify_hashed_cookie,
 )
+from app.api.api_v1.schemas.auth_schemas import LoginData
 from app.api.api_v1.dependenses import admin_auth
 from app.tgbot.conf_static import templates
 
@@ -39,11 +37,10 @@ async def login_form(request: Request):
 @router.post("/login")
 async def login(
     request: Request,
-    username: str = Form(...),
-    password: str = Form(...),
+    login_data: LoginData = Depends(LoginData.as_form),
 ):
     try:
-        if not (username == ADMIN_LOGIN and password == ADMIN_PASSWORD):
+        if not (login_data.username == settings.api.admin_login and login_data.password == settings.api.admin_password):
             msg = "Incorrect Username or Rassword"
             return templates.TemplateResponse(
                 "auth_login.html",
@@ -54,7 +51,7 @@ async def login(
             )
         else:
         # Генерация зашифрованной куки
-            hashed_cookie = create_hashed_cookie(username, SECRET_KEY)
+            hashed_cookie = create_hashed_cookie(login_data.username, settings.api.seckret_key)
             response = RedirectResponse(url="/users/",  status_code=status. HTTP_302_FOUND)
             # Устанавливаем зашифрованную куку
             response.set_cookie(

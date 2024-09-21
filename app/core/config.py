@@ -4,7 +4,12 @@ env = Env()
 env.read_env()
 
 
+
+
 class ApiConfig:
+    admin_login = env('ADMIN_LOGIN')
+    admin_password = env('ADMIN_PASSWORD')
+    seckret_key = env('SECRET_KEY')
     host: str = env('API_HOST')
     port: int = env.int('API_PORT')
     web_server_admin: str = env('WEB_SERVER_ADMIN')
