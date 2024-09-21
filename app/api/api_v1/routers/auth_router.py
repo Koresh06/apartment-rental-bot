@@ -5,10 +5,9 @@ from jose import JWTError
 from datetime import timedelta
 from app.api.api_v1.auth_helpers import (
     create_hashed_cookie,
-    verify_hashed_cookie,
 )
+from app.api.api_v1.dependenses import check_admin_auth
 from app.api.api_v1.schemas.auth_schemas import LoginData
-from app.api.api_v1.dependenses import admin_auth
 from app.tgbot.conf_static import templates
 
 from app.core.config import settings
@@ -24,12 +23,16 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="admin/login")
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login_form(request: Request):
+async def login_form(
+    request: Request,
+    is_authenticated: bool = Depends(check_admin_auth),
+):
+    print(is_authenticated)
     return templates.TemplateResponse(
         "auth_login.html",
         {
             "request": request,
-            # "user": is_authenticated,
+            "user": is_authenticated,
         },
     )
 
@@ -41,7 +44,7 @@ async def login(
 ):
     try:
         if not (login_data.username == settings.api.admin_login and login_data.password == settings.api.admin_password):
-            msg = "Incorrect Username or Rassword"
+            msg = "Неверное имя пользователя или пароль"
             return templates.TemplateResponse(
                 "auth_login.html",
                 {
@@ -69,9 +72,16 @@ async def login(
         )
 
 
-# Выход (удаление куки)
-@router.post("/logout")
-async def logout():
-    response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-    response.delete_cookie("admin_token")
+@router.get("/logout", response_class=HTMLResponse)
+async def logout(request: Request):
+    msg = "Успешный выход из системы"
+    response = templates.TemplateResponse(
+        "auth_login.html",
+        {
+            "request": request,
+            "msg": msg,
+        },
+    )
+
+    response.delete_cookie(key="admin_token")
     return response

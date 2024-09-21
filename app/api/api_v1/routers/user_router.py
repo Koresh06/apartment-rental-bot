@@ -3,10 +3,9 @@ from fastapi import Depends, APIRouter, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.api.api_v1.dependenses import admin_auth
+from app.api.api_v1.dependenses import admin_auth, check_admin_auth
 from app.core.db_helper import db_helper
 from app.tgbot.conf_static import templates
-
 
 
 router = APIRouter(
@@ -26,29 +25,49 @@ async def get_apartments(
         AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(admin_auth),
 ):
 
-    return templates.TemplateResponse("apartaments/home.html", {"request": request})
+    return templates.TemplateResponse(
+        "apartaments/home.html",
+        {
+            "request": request,
+            "user": is_authenticated,
+        },
+    )
 
 
-@router.get('/statistics/', response_class=HTMLResponse)
+@router.get("/statistics/", response_class=HTMLResponse)
 async def get_statistics(
     request: Request,
     session: Annotated[
         AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
-    return templates.TemplateResponse("statistics.html", {"request": request})
+    return templates.TemplateResponse(
+        "statistics.html",
+        {
+            "request": request,
+            "user": is_authenticated,
+        },
+    )
 
 
-@router.get('/get_users/', response_class=HTMLResponse)
+@router.get("/get_users/", response_class=HTMLResponse)
 async def get_users(
     request: Request,
     session: Annotated[
         AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
-    return templates.TemplateResponse("get_users.html", {"request": request})
-
+    return templates.TemplateResponse(
+        "get_users.html",
+        {
+            "request": request,
+            "user": is_authenticated,
+        },
+    )

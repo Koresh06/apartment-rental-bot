@@ -1,9 +1,19 @@
 from typing import Annotated, List, Optional
-from fastapi import Depends, APIRouter, File, Form, HTTPException, Request, UploadFile, Response, status
+from fastapi import (
+    Depends,
+    APIRouter,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile,
+    Response,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.api.api_v1.dependenses import admin_auth
+from app.api.api_v1.dependenses import admin_auth, check_admin_auth
 from app.api.api_v1.save_path_photo import remove_photos, save_photos
 from app.api.api_v1.schemas.apartament_schemas import CreateApartmentSchema
 from app.api.api_v1.services.apartament_service import ApartamentRepo
@@ -28,6 +38,7 @@ router = APIRouter(
 async def get_apartaments(
     request: Request,
     session: Annotated[AsyncSession, Depends(db_helper.get_db)],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
     apartaments = await ApartamentRepo(session).get_apartaments()
 
@@ -36,8 +47,10 @@ async def get_apartaments(
         {
             "request": request,
             "apartaments": apartaments,
+            "user": is_authenticated,
         },
     )
+
 
 @router.get("/create_apartament/", response_class=HTMLResponse)
 async def create_apartament(
@@ -46,9 +59,14 @@ async def create_apartament(
         AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
     return templates.TemplateResponse(
-        "apartaments/create_apartament.html", {"request": request}
+        "apartaments/create_apartament.html",
+        {
+            "request": request,
+            "user": is_authenticated,
+        },
     )
 
 
@@ -69,9 +87,7 @@ async def create_apartament(
     )
     await ApartamentRepo(session).create_apartament(new_apartament)
 
-    saved_photos = await save_photos(
-        create_apartment.photos, new_apartament.id
-    )
+    saved_photos = await save_photos(create_apartment.photos, new_apartament.id)
 
     for photo_path in saved_photos:
         apartment_photo = ApartmentPhoto(
@@ -88,9 +104,10 @@ async def get_apartament(
     request: Request,
     apartament_id: int,
     session: Annotated[
-        AsyncSession, 
+        AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
     apartament = await ApartamentRepo(session).get_aptament_by_id(apartament_id)
 
@@ -99,20 +116,23 @@ async def get_apartament(
         {
             "request": request,
             "apartament": apartament,
+            "user": is_authenticated,
         },
     )
+
 
 @router.post("/update_status/{apartament_id}/")
 async def update_status(
     apartament_id: int,
     session: Annotated[
-        AsyncSession, 
+        AsyncSession,
         Depends(db_helper.get_db),
     ],
 ):
     await ApartamentRepo(session).update_status(apartament_id)
-    return RedirectResponse(f"/apartaments/get_apartament/{apartament_id}/", status_code=303)
-
+    return RedirectResponse(
+        f"/apartaments/get_apartament/{apartament_id}/", status_code=303
+    )
 
 
 @router.get("/edit_apartament/{apartament_id}/", response_class=HTMLResponse)
@@ -120,9 +140,10 @@ async def update_apartament(
     request: Request,
     apartament_id: int,
     session: Annotated[
-        AsyncSession, 
+        AsyncSession,
         Depends(db_helper.get_db),
     ],
+    is_authenticated: bool = Depends(check_admin_auth),
 ):
     apartament = await ApartamentRepo(session).get_aptament_by_id(apartament_id)
 
@@ -131,6 +152,7 @@ async def update_apartament(
         {
             "request": request,
             "apartament": apartament,
+            "user": is_authenticated,
         },
     )
 
@@ -139,9 +161,9 @@ async def update_apartament(
 async def update_apartament(
     apartament_id: int,
     session: Annotated[
-        AsyncSession, 
+        AsyncSession,
         Depends(db_helper.get_db),
-    ],  
+    ],
     create_apartment: CreateApartmentSchema = Depends(CreateApartmentSchema.create),
 ):
 
@@ -154,14 +176,17 @@ async def update_apartament(
     )
     await ApartamentRepo(session).update_apartament_id(apartament_id, data)
 
-    if not create_apartment.photos or all(photo.filename == '' for photo in create_apartment.photos):
+    if not create_apartment.photos or all(
+        photo.filename == "" for photo in create_apartment.photos
+    ):
         print("Фотографии не переданы или они пустые.")
-        return RedirectResponse(f"/apartaments/get_apartament/{apartament_id}/", status_code=303)
+        return RedirectResponse(
+            f"/apartaments/get_apartament/{apartament_id}/", status_code=303
+        )
 
     await ApartamentPhotoRepo(session).delete_photos_by_apartment_id(apartament_id)
 
     new_photos_paths = await save_photos(create_apartment.photos, apartament_id)
-
 
     # Сохраняем новые пути к фотографиям в базу данных
     for photo_path in new_photos_paths:
@@ -171,7 +196,9 @@ async def update_apartament(
         )
         await ApartamentPhotoRepo(session).add_path_photo_apartament(apartament_photo)
 
-    return RedirectResponse(f"/apartaments/get_apartament/{apartament_id}/", status_code=303)
+    return RedirectResponse(
+        f"/apartaments/get_apartament/{apartament_id}/", status_code=303
+    )
 
 
 @router.post("/delete_apartament/{apartament_id}/")
@@ -181,7 +208,7 @@ async def delete_apartament(
 ):
     # Получаем апартамент из базы данных
     apartament = await ApartamentRepo(session).get_aptament_by_id(apartament_id)
-    
+
     if not apartament:
         raise HTTPException(status_code=404, detail="Апартамент не найден")
 

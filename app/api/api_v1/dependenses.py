@@ -1,12 +1,8 @@
-from typing import Annotated
-from fastapi import Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException, Request
 
 from app.core.config import settings
 from app.api.api_v1.auth_helpers import verify_hashed_cookie
-from app.core.db_helper import db_helper
-from app.core.models.user import Users
+
 
 
 async def admin_auth(request: Request):
@@ -14,3 +10,9 @@ async def admin_auth(request: Request):
     if admin_token is None or not verify_hashed_cookie(admin_token, settings.api.admin_login, settings.api.seckret_key):
         raise HTTPException(status_code=302, detail="Redirecting to login", headers={"Location": "/auth/login"})
     return True
+
+async def check_admin_auth(request: Request):
+    admin_token = request.cookies.get("admin_token")
+    if not admin_token or not verify_hashed_cookie(admin_token, settings.api.admin_login, settings.api.seckret_key):
+        return None 
+    return True 
