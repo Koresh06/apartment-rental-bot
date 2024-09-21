@@ -1,8 +1,9 @@
 from typing import Annotated, List, Optional
-from fastapi import Depends, APIRouter, File, Form, HTTPException, Request, UploadFile, Response
+from fastapi import Depends, APIRouter, File, Form, HTTPException, Request, UploadFile, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from app.api.api_v1.dependenses import admin_auth
 from app.api.api_v1.save_path_photo import remove_photos, save_photos
 from app.api.api_v1.schemas.apartament_schemas import CreateApartmentSchema
 from app.api.api_v1.services.apartament_service import ApartamentRepo
@@ -19,10 +20,11 @@ router = APIRouter(
     responses={
         404: {"description": "Not found"},
     },
+    dependencies=[Depends(admin_auth)],
 )
 
 
-@router.get("/get_apartaments/")
+@router.get("/get_apartaments/", response_class=HTMLResponse)
 async def get_apartaments(
     request: Request,
     session: Annotated[AsyncSession, Depends(db_helper.get_db)],
@@ -36,7 +38,6 @@ async def get_apartaments(
             "apartaments": apartaments,
         },
     )
-
 
 @router.get("/create_apartament/", response_class=HTMLResponse)
 async def create_apartament(
@@ -158,7 +159,7 @@ async def update_apartament(
         return RedirectResponse(f"/apartaments/get_apartament/{apartament_id}/", status_code=303)
 
     await ApartamentPhotoRepo(session).delete_photos_by_apartment_id(apartament_id)
-    
+
     new_photos_paths = await save_photos(create_apartment.photos, apartament_id)
 
 

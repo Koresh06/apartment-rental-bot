@@ -1,8 +1,9 @@
 from typing import Annotated
-from fastapi import Depends, APIRouter, Request
+from fastapi import Depends, APIRouter, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
+from app.api.api_v1.dependenses import admin_auth
 from app.core.db_helper import db_helper
 from app.tgbot.conf_static import templates
 
@@ -14,6 +15,7 @@ router = APIRouter(
     responses={
         404: {"description": "Not found"},
     },
+    dependencies=[Depends(admin_auth)],
 )
 
 
@@ -25,6 +27,7 @@ async def get_apartments(
         Depends(db_helper.get_db),
     ],
 ):
+
     return templates.TemplateResponse("apartaments/home.html", {"request": request})
 
 

@@ -16,6 +16,8 @@ uvicorn = "^0.30.6"
 python-multipart = "^0.0.9"
 fastapi = "^0.114.2"
 asyncpg = "^0.29.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
 
 
 [build-system]
